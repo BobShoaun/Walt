@@ -3,8 +3,8 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 import './index.css'
-import Dashboard from './Dashboard.tsx'
-import AddExpense from './AddExpense.tsx';
+import Dashboard from './pages/Dashboard.tsx'
+import AddExpense from './pages/AddExpense.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
