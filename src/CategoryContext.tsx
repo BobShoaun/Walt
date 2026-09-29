@@ -6,20 +6,27 @@ import {
   type ReactNode,
 } from "react";
 import type { Category } from "./Category";
-import { getCategories } from "./firebase";
+import type { PaymentMethod } from "./PaymentMethod";
+import { getCategories, getPaymentMethods } from "./firebase";
 
 interface CategoriesContextValue {
   categories: Category[];
-  loading: boolean;
-  error: string | null;
+  categoriesLoading: boolean;
+  categoriesError: string | null;
+  paymentMethods: PaymentMethod[];
+  paymentMethodsLoading: boolean;
+  paymentMethodsError: string | null;
 }
 
 const CategoriesContext = createContext<CategoriesContextValue | null>(null);
 
 export const CategoriesProvider = ({ children }: { children: ReactNode }) => {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [categoriesError, setCategoriesError] = useState<string | null>(null);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+  const [paymentMethodsLoading, setPaymentMethodsLoading] = useState(true);
+  const [paymentMethodsError, setPaymentMethodsError] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -30,7 +37,7 @@ export const CategoriesProvider = ({ children }: { children: ReactNode }) => {
       })
       .catch((fetchError: unknown) => {
         if (isMounted) {
-          setError(
+          setCategoriesError(
             fetchError instanceof Error
               ? fetchError.message
               : "Unable to load categories.",
@@ -38,7 +45,24 @@ export const CategoriesProvider = ({ children }: { children: ReactNode }) => {
         }
       })
       .finally(() => {
-        if (isMounted) setLoading(false);
+        if (isMounted) setCategoriesLoading(false);
+      });
+
+    getPaymentMethods()
+      .then((loadedPaymentMethods) => {
+        if (isMounted) setPaymentMethods(loadedPaymentMethods);
+      })
+      .catch((fetchError: unknown) => {
+        if (isMounted) {
+          setPaymentMethodsError(
+            fetchError instanceof Error
+              ? fetchError.message
+              : "Unable to load payment methods.",
+          );
+        }
+      })
+      .finally(() => {
+        if (isMounted) setPaymentMethodsLoading(false);
       });
 
     return () => {
@@ -47,7 +71,16 @@ export const CategoriesProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <CategoriesContext.Provider value={{ categories, loading, error }}>
+    <CategoriesContext.Provider
+      value={{
+        categories,
+        categoriesLoading,
+        categoriesError,
+        paymentMethods,
+        paymentMethodsLoading,
+        paymentMethodsError,
+      }}
+    >
       {children}
     </CategoriesContext.Provider>
   );

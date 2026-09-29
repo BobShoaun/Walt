@@ -1,4 +1,3 @@
-import { paymentMethods } from "../PaymentMethod";
 import { useNavigate } from "react-router-dom";
 
 import { useState } from "react";
@@ -8,22 +7,41 @@ import { useCategories } from "../CategoryContext.tsx";
 
 const AddExpense = () => {
   const navigate = useNavigate();
-  const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
+  const {
+    categories,
+    categoriesLoading,
+    categoriesError,
+    paymentMethods,
+    paymentMethodsLoading,
+    paymentMethodsError,
+  } = useCategories();
 
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
   const [timestamp, setTimestamp] = useState<Date>(new Date());
-  const [paymentMethod, setPaymentMethod] = useState<string>("credit-card");
+  const [paymentMethodId, setPaymentMethodId] = useState<string>("");
   const [category, setCategory] = useState<string>("");
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const addExpense = async () => {
     console.log("adding expense...");
     setSubmitError(null);
+    if (!Number.isFinite(amount) || amount < 0) {
+      setSubmitError("Enter a valid non-negative amount.");
+      return;
+    }
+
     const selectedCategory = categories.find(({ id }) => id === category);
     if (!selectedCategory) {
       setSubmitError("Select a valid category.");
+      return;
+    }
+    const selectedPaymentMethod = paymentMethods.find(
+      ({ id }) => id === paymentMethodId,
+    );
+    if (!selectedPaymentMethod) {
+      setSubmitError("Select a valid payment method.");
       return;
     }
 
@@ -34,17 +52,18 @@ const AddExpense = () => {
         description,
         amount,
         currency: "CAD",
-        category,
+        categoryId: category,
         timestamp: timestamp.getTime(),
-        paymentType: "credit-card",
-      }, selectedCategory);
+        paymentMethodId,
+      }, selectedCategory, selectedPaymentMethod);
     } catch (error) {
       setSubmitError(error instanceof Error ? error.message : "Unable to add expense.");
     }
   };
 
   const canAddExpense = () => {
-    return title.length > 0 && category.length > 0;
+    return true;
+    // return title.length > 0 && category.length > 0 && Number.isFinite(amount) && amount >= 0;
   }
 
   return (
@@ -65,6 +84,7 @@ const AddExpense = () => {
             name="amount"
             id="amount"
             min={0}
+            step="0.01"
             value={amount}
             onChange={(e) => setAmount(e.target.valueAsNumber)}
             className="block border border-gray-300 shadow-inner w-full px-3 py-2 mt-1"
@@ -76,6 +96,7 @@ const AddExpense = () => {
           <select
             name="category"
             id="category"
+            required
             value={category}
             disabled={categoriesLoading || categories.length === 0}
             onChange={(e) => setCategory(e.target.value)}
@@ -86,7 +107,7 @@ const AddExpense = () => {
             </option>
             {categories.map((category) => (
               <option key={category.id} value={category.id}>
-                {category.image} {category.name}
+                {category.icon} {category.name}
               </option>
             ))}
           </select>
@@ -102,6 +123,7 @@ const AddExpense = () => {
           <input
             name="title"
             id="title"
+            required
             value={title}
             onChange={e => setTitle(e.target.value)}
             className="mt-1 block border border-gray-300 shadow-inner w-full px-3 py-2"
@@ -123,13 +145,28 @@ const AddExpense = () => {
           <label htmlFor="payment-method">Payment Method</label>
           <select
             name="payment-method"
+            id="payment-method"
+            required
+            value={paymentMethodId}
+            disabled={paymentMethodsLoading || paymentMethods.length === 0}
+            onChange={(e) => setPaymentMethodId(e.target.value)}
             className="block w-full border border-gray-300 px-3 py-2 cursor-pointer mt-1 shadow-inner"
           >
+            <option value="" disabled>
+              {paymentMethodsLoading ? "Loading payment methods..." : "Select a payment method"}
+            </option>
             {paymentMethods.map((paymentMethod) => (
-              <option key={paymentMethod.slug}>{paymentMethod.name}</option>
+              <option key={paymentMethod.id} value={paymentMethod.id}>
+                {paymentMethod.icon} {paymentMethod.name}
+              </option>
             ))}
           </select>
         </div>
+        {paymentMethodsError && (
+          <p role="alert" className="text-red-700">
+            {paymentMethodsError}
+          </p>
+        )}
 
         <div>
           <label htmlFor="timestamp">Date & Time</label>
@@ -137,6 +174,7 @@ const AddExpense = () => {
             type="datetime-local"
             name="timestamp"
             id="timestamp"
+            required
             value={new Date(
               timestamp.getTime() - timestamp.getTimezoneOffset() * 60_000,
             )

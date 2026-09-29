@@ -5,8 +5,8 @@ export interface Expense {
   amount: number;
   currency: string;
   timestamp: number;
-  category: string;
-  paymentType: "credit-card" | "cash" | "bank-transfer" | "debit-card"; // paymentMethod
+  categoryId: string;
+  paymentMethodId: string;
   reimbursement?: {
     amount: number;
     reason: string;
@@ -21,8 +21,8 @@ export const dummyExpenses: Expense[] = [
     amount: 82.45,
     currency: "USD",
     timestamp: Date.now() - 1000 * 60 * 60 * 2, // 2 hours ago
-    category: "groceries",
-    paymentType: "debit-card",
+    categoryId: "groceries",
+    paymentMethodId: "debit-card",
   },
   {
     id: "2",
@@ -30,8 +30,8 @@ export const dummyExpenses: Expense[] = [
     amount: 26.75,
     currency: "USD",
     timestamp: Date.now() - 1000 * 60 * 60 * 5,
-    category: "transportation",
-    paymentType: "credit-card",
+    categoryId: "transportation",
+    paymentMethodId: "credit-card",
   },
   {
     id: "3",
@@ -39,8 +39,8 @@ export const dummyExpenses: Expense[] = [
     amount: 15.99,
     currency: "USD",
     timestamp: Date.now() - 1000 * 60 * 60 * 24 * 3,
-    category: "entertainment",
-    paymentType: "credit-card",
+    categoryId: "entertainment",
+    paymentMethodId: "credit-card",
   },
   {
     id: "4",
@@ -48,8 +48,8 @@ export const dummyExpenses: Expense[] = [
     amount: 4.85,
     currency: "USD",
     timestamp: Date.now() - 1000 * 60 * 60 * 8,
-    category: "food-and-drinks",
-    paymentType: "cash",
+    categoryId: "food-and-drinks",
+    paymentMethodId: "cash",
   },
   {
     id: "5",
@@ -57,8 +57,8 @@ export const dummyExpenses: Expense[] = [
     amount: 52.1,
     currency: "USD",
     timestamp: Date.now() - 1000 * 60 * 60 * 48,
-    category: "transportation",
-    paymentType: "debit-card",
+    categoryId: "transportation",
+    paymentMethodId: "debit-card",
   },
   {
     id: "6",
@@ -66,8 +66,8 @@ export const dummyExpenses: Expense[] = [
     amount: 67.3,
     currency: "USD",
     timestamp: Date.now() - 1000 * 60 * 60 * 72,
-    category: "food-and-drinks",
-    paymentType: "credit-card",
+    categoryId: "food-and-drinks",
+    paymentMethodId: "credit-card",
   },
   {
     id: "7",
@@ -75,8 +75,8 @@ export const dummyExpenses: Expense[] = [
     amount: 40,
     currency: "USD",
     timestamp: Date.now() - 1000 * 60 * 60 * 24 * 5,
-    category: "health-and-fitness",
-    paymentType: "bank-transfer",
+    categoryId: "health-and-fitness",
+    paymentMethodId: "bank-transfer",
   },
   {
     id: "8",
@@ -84,8 +84,8 @@ export const dummyExpenses: Expense[] = [
     amount: 120.5,
     currency: "USD",
     timestamp: Date.now() - 1000 * 60 * 60 * 24 * 6,
-    category: "utilities",
-    paymentType: "bank-transfer",
+    categoryId: "utilities",
+    paymentMethodId: "bank-transfer",
   },
   {
     id: "9",
@@ -93,8 +93,8 @@ export const dummyExpenses: Expense[] = [
     amount: 28,
     currency: "USD",
     timestamp: Date.now() - 1000 * 60 * 60 * 12,
-    category: "entertainment",
-    paymentType: "credit-card",
+    categoryId: "entertainment",
+    paymentMethodId: "credit-card",
   },
   {
     id: "10",
@@ -102,7 +102,7 @@ export const dummyExpenses: Expense[] = [
     amount: 25,
     currency: "USD",
     timestamp: Date.now() - 1000 * 60 * 60 * 24 * 10,
-    category: "others",
-    paymentType: "debit-card",
+    categoryId: "others",
+    paymentMethodId: "debit-card",
   },
 ];

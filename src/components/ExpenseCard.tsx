@@ -4,13 +4,13 @@ import { useCategories } from "../CategoryContext.tsx";
 const ExpenseCard = ({ expense }: { expense: Expense }) => {
   const { categories } = useCategories();
   const category = categories.find(
-    (category) => category.id === expense.category
+    (category) => category.id === expense.categoryId
   );
 
   return (
     <div className="flex gap-2 py-1 px-3 border-2 border-collapse border-gray-300">
       <div className="text-2xl my-auto bg-white rounded-full p-1 shadow-sm select-none">
-        <p>{category?.image}</p>
+        <p>{category?.icon}</p>
       </div>
 
       <div>

@@ -17,6 +17,7 @@ import {
 
 import type { Expense } from "./Expense";
 import type { Category } from "./Category";
+import type { PaymentMethod } from "./PaymentMethod";
 
 const requiredEnv = (key: string, value: string | undefined) => {
   if (!value) {
@@ -47,10 +48,25 @@ export const getCategories = async (): Promise<Category[]> => {
   }) as Category);
 };
 
-export const addExpense = async (expense: Expense, category: Category) => {
+export const getPaymentMethods = async (): Promise<PaymentMethod[]> => {
+  const paymentMethodSnapshot = await getDocs(collection(db, "payment methods"));
+  return paymentMethodSnapshot.docs.map((paymentMethodDoc) => ({
+    ...paymentMethodDoc.data(),
+    id: paymentMethodDoc.id,
+  }) as PaymentMethod);
+};
+
+export const addExpense = async (
+  expense: Expense,
+  category: Category,
+  paymentMethod: PaymentMethod,
+) => {
  try {
-    if (category.id !== expense.category) {
-      throw new Error(`Unknown category: ${expense.category}`);
+    if (category.id !== expense.categoryId) {
+      throw new Error(`Unknown category: ${expense.categoryId}`);
+    }
+    if (paymentMethod.id !== expense.paymentMethodId) {
+      throw new Error(`Unknown payment method: ${expense.paymentMethodId}`);
     }
 
     const categoryRef = doc(db, "categories", category.id);
@@ -58,11 +74,28 @@ export const addExpense = async (expense: Expense, category: Category) => {
     if (!categorySnapshot.exists()) {
       await setDoc(categoryRef, {
         name: category.name,
-        image: category.image,
+        icon: category.icon,
         color: category.color,
       });
     } else if (categorySnapshot.get("id") !== undefined) {
       await updateDoc(categoryRef, { id: deleteField() });
+    }
+
+    const paymentMethodRef = doc(db, "payment methods", paymentMethod.id);
+    const paymentMethodSnapshot = await getDoc(paymentMethodRef);
+    if (!paymentMethodSnapshot.exists()) {
+      await setDoc(paymentMethodRef, {
+        name: paymentMethod.name,
+        icon: paymentMethod.icon,
+      });
+    } else if (
+      paymentMethodSnapshot.get("slug") !== undefined ||
+      paymentMethodSnapshot.get("id") !== undefined
+    ) {
+      await updateDoc(paymentMethodRef, {
+        slug: deleteField(),
+        id: deleteField(),
+      });
     }
 
     const docRef = await addDoc(collection(db, "expenses"), {
@@ -71,7 +104,8 @@ export const addExpense = async (expense: Expense, category: Category) => {
       amount: expense.amount,
       timestamp: expense.timestamp,
       currency: expense.currency,
-      category: categoryRef,
+      categoryId: categoryRef,
+      paymentMethodId: paymentMethodRef,
     });
 
     console.log("Document written with ID: ", docRef.id);

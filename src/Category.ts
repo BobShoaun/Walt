@@ -35,7 +35,7 @@
 export interface Category {
   name: string;
   id: string;
-  image: string;
+  icon: string;
   color: string;
 }
 
@@ -44,43 +44,43 @@ const categories: Category[] = [
   {
     name: "Food & Drinks",
     id: "food-and-drinks",
-    image: "🍉",
+    icon: "🍉",
     color: ""
   },
   {
     name: "Entertainment",
     id: "entertainment",
-    image: "🎮",
+    icon: "🎮",
     color: ""
   },
   {
     name: "Utilities",
     id: "utilities",
-    image: "💡",
+    icon: "💡",
     color: ""
   },
   {
     name: "Health & Fitness",
     id: "health-and-fitness",
-    image: "💪",
+    icon: "💪",
     color: ""
   },
   {
     name: "Transportation",
     id: "transportation",
-    image: "🚋",
+    icon: "🚋",
     color: ""
   },
   {
     name: "Groceries",
     id: "groceries",
-    image: "🧺",
+    icon: "🧺",
     color: ""
   },
   {
     name: "Others",
     id: "others",
-    image: "🔶",
+    icon: "🔶",
     color: ""
   },
 ];
