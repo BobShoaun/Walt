@@ -11,7 +11,8 @@ export interface Record {
     amount: number;
     reason: string;
   };
-  isHidden?: boolean; // or is redacted?
+  isExcluded?: boolean;
+  isRedacted?: boolean;
 }
 
 export const dummyRecords: Record[] = [

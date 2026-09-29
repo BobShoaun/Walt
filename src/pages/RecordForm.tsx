@@ -27,7 +27,9 @@ const RecordForm = () => {
   const [description, setDescription] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
   const [timestamp, setTimestamp] = useState<Date>(new Date());
-  const [isHidden, setIsHidden] = useState<boolean>(false);
+  const [isExcluded, setIsExcluded] = useState<boolean>(false);
+  const [isRedacted, setIsRedacted] = useState<boolean>(false);
+  const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
   const [paymentMethodId, setPaymentMethodId] = useState<string>("");
   const [category, setCategory] = useState<string>("");
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -38,7 +40,14 @@ const RecordForm = () => {
     setDescription(existingRecord.description ?? "");
     setAmount(existingRecord.amount);
     setTimestamp(new Date(existingRecord.timestamp));
-    setIsHidden(existingRecord.isHidden ?? false);
+    setIsExcluded(existingRecord.isExcluded ?? false);
+    setIsRedacted(existingRecord.isRedacted ?? false);
+    setShowAdvanced(
+      Boolean(
+        existingRecord.isExcluded ||
+        existingRecord.isRedacted,
+      ),
+    );
     setPaymentMethodId(existingRecord.paymentMethodId);
     setCategory(existingRecord.categoryId);
   }, [existingRecord]);
@@ -78,7 +87,8 @@ const RecordForm = () => {
         categoryId: category,
         timestamp: timestamp.getTime(),
         paymentMethodId,
-        isHidden,
+        isExcluded,
+        isRedacted,
       }, selectedCategory, selectedPaymentMethod);
       await refreshRecords();
       navigate("/");
@@ -199,18 +209,6 @@ const RecordForm = () => {
           />
         </div>
 
-        <label htmlFor="is-hidden" className="flex cursor-pointer items-center gap-2">
-          <input
-            type="checkbox"
-            name="isHidden"
-            id="is-hidden"
-            checked={isHidden}
-            onChange={(e) => setIsHidden(e.target.checked)}
-            className="cursor-pointer"
-          />
-          Hide this record
-        </label>
-
         <div>
           <label htmlFor="payment-method">Payment Method</label>
           <select
@@ -256,6 +254,57 @@ const RecordForm = () => {
             className="mt-1 w-full block border border-gray-300 shadow-inner px-3 py-2"
           />
         </div>
+
+        <section className="overflow-hidden rounded-md border border-slate-200 bg-white">
+          <button
+            type="button"
+            aria-expanded={showAdvanced}
+            aria-controls="advanced-record-fields"
+            onClick={() => setShowAdvanced((isOpen) => !isOpen)}
+            className="flex w-full cursor-pointer items-center justify-between px-3 py-3 text-left font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-emerald-700"
+          >
+            <span>
+              {showAdvanced ? "Hide advanced options" : "Show advanced options"}
+            </span>
+            <ChevronDown
+              aria-hidden="true"
+              size={18}
+              className={`transition-transform ${showAdvanced ? "rotate-180" : ""}`}
+            />
+          </button>
+          {showAdvanced && (
+            <div id="advanced-record-fields" className="border-t border-slate-200 p-3">
+              <label
+                htmlFor="is-excluded"
+                className="flex cursor-pointer items-center gap-2"
+              >
+                <input
+                  type="checkbox"
+                  name="isExcluded"
+                  id="is-excluded"
+                  checked={isExcluded}
+                  onChange={(e) => setIsExcluded(e.target.checked)}
+                  className="cursor-pointer"
+                />
+                Exclude from totals
+              </label>
+              <label
+                htmlFor="is-redacted"
+                className="mt-3 flex cursor-pointer items-center gap-2"
+              >
+                <input
+                  type="checkbox"
+                  name="isRedacted"
+                  id="is-redacted"
+                  checked={isRedacted}
+                  onChange={(e) => setIsRedacted(e.target.checked)}
+                  className="cursor-pointer"
+                />
+                Redact in list
+              </label>
+            </div>
+          )}
+        </section>
 
         <div className={isEditing ? "flex gap-2" : ""}>
           <button

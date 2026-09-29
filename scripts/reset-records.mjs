@@ -118,7 +118,6 @@ const seedDocuments = sampleRecords.map((record) => ({
     })(),
     categoryId: doc(db, "categories", record.categoryId),
     paymentMethodId: doc(db, "payment methods", record.paymentMethodId),
-    isHidden: false,
   },
 }));
 

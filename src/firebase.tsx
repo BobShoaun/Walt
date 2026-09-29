@@ -79,7 +79,7 @@ const getReferenceId = (value: unknown): string => {
 const mapRecordDocument = (
   recordDoc: QueryDocumentSnapshot<DocumentData>,
 ): Record => {
-  const data = recordDoc.data();
+  const { excludeFromTotals, ...data } = recordDoc.data();
   const timestamp =
     data.timestamp instanceof Timestamp
       ? data.timestamp.toMillis()
@@ -90,6 +90,7 @@ const mapRecordDocument = (
     timestamp,
     categoryId: getReferenceId(data.categoryId ?? data.category),
     paymentMethodId: getReferenceId(data.paymentMethodId ?? data.paymentType),
+    isExcluded: data.isExcluded ?? excludeFromTotals ?? false,
   } as Record;
 };
 
@@ -179,11 +180,15 @@ export const saveRecord = async (
       currency: record.currency,
       categoryId: categoryRef,
       paymentMethodId: paymentMethodRef,
-      isHidden: record.isHidden ?? false,
+      isExcluded: record.isExcluded ?? false,
+      isRedacted: record.isRedacted ?? false,
     };
 
     if (record.id) {
-      await updateDoc(doc(db, "records", record.id), recordData);
+      await updateDoc(doc(db, "records", record.id), {
+        ...recordData,
+        excludeFromTotals: deleteField(),
+      });
       return record.id;
     }
 

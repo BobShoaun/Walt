@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { EyeOff } from "lucide-react";
 import type { Record } from "../Record";
 import { useAppData } from "../AppDataContext.tsx";
 
@@ -14,30 +15,31 @@ const RecordCard = ({ record }: { record: Record }) => {
     currency: record.currency,
     currencyDisplay: "narrowSymbol",
   }).format(record.amount);
+  const isRedacted = record.isRedacted ?? false;
 
   return (
     <Link
       to={`/records/${record.id}/edit`}
-      aria-label={`Edit record: ${record.title}`}
-      className="block cursor-pointer text-left outline-offset-2 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-700"
+      aria-label={isRedacted ? "Edit redacted record" : `Edit record: ${record.title}`}
+      className="block cursor-pointer text-left hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-emerald-700"
     >
       <article className="grid grid-cols-[2.75rem_minmax(0,1fr)_auto] items-center gap-3 border-b border-slate-200 bg-white px-3 py-3 last:border-b-0">
         <div className="grid size-11 place-items-center rounded-md bg-emerald-50 text-2xl text-emerald-800 select-none">
-          {category?.icon ?? "•"}
+          {isRedacted ? <EyeOff aria-hidden="true" size={20} /> : category?.icon ?? "•"}
         </div>
 
         <div className="min-w-0">
           <h2 className="wrap-break-word text-sm font-semibold text-slate-900">
-            {record.title}
+            {isRedacted ? "Redacted record" : record.title}
           </h2>
           <p className="mt-0.5 text-xs text-slate-500">
-            {category?.name ?? "Uncategorized"}
+            {isRedacted ? "Redacted" : category?.name ?? "Uncategorized"}
           </p>
         </div>
 
         <div className="text-right">
           <p className="whitespace-nowrap text-sm font-semibold tabular-nums text-rose-700">
-            -{formattedAmount}
+            {isRedacted ? "••••" : `-${formattedAmount}`}
           </p>
           {hasValidTimestamp ? (
             <time

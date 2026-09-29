@@ -350,7 +350,6 @@ for (let offset = 0; offset < recordsToAdd.length; offset += 450) {
       timestamp: record.timestamp,
       categoryId: doc(db, "categories", record.categoryId),
       paymentMethodId: doc(db, "payment methods", record.paymentMethodId),
-      isHidden: false,
     });
   }
   await batch.commit();

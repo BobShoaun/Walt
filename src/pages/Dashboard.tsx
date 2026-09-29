@@ -33,12 +33,11 @@ const Dashboard = () => {
     1,
   ).getTime();
   const recentRecords = records
-    .filter((record) => !record.isHidden)
     .sort((first, second) => second.timestamp - first.timestamp)
     .slice(0, 4);
   const currentMonthRecords = records.filter(
     (record) =>
-      !record.isHidden &&
+      !record.isExcluded &&
       record.timestamp >= monthStart &&
       record.timestamp < nextMonthStart,
   );

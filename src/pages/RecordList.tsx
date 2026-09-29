@@ -10,7 +10,7 @@ const RecordList = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [recordsError, setRecordsError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const scrollContainerRef = useRef<HTMLElement | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const loadMoreTargetRef = useRef<HTMLDivElement | null>(null);
   const loadingMoreRef = useRef(false);
 
@@ -89,7 +89,9 @@ const RecordList = () => {
   const visibleRecords = records
     .filter(
       (record) =>
-        !record.isHidden && record.title.toLowerCase().includes(searchQuery),
+        (record.isRedacted
+          ? "redacted record".includes(searchQuery)
+          : record.title.toLowerCase().includes(searchQuery)),
     )
     .sort((first, second) => second.timestamp - first.timestamp);
 

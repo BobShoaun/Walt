@@ -51,7 +51,7 @@ const RecordInsights = () => {
 
   const monthRecords = records.filter(
     (record) =>
-      !record.isHidden &&
+      !record.isExcluded &&
       record.timestamp >= monthStart &&
       record.timestamp < nextMonthStart,
   );
