@@ -8,14 +8,17 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "reset:records": "node scripts/reset-records.mjs"
+    "reset:records": "node scripts/reset-records.mjs",
+    "add:records-to-200": "node scripts/add-records-to-200.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.17",
     "firebase": "^12.10.0",
+    "lucide-react": "^1.48.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.9.5"
+    "react-router-dom": "^7.9.5",
+    "recharts": "^3.10.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",

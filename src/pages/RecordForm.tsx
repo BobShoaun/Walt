@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 
 import { useEffect, useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 import { saveRecord as saveRecordToFirebase } from "../firebase";
 import { useAppData } from "../AppDataContext.tsx";
@@ -108,16 +109,44 @@ const RecordForm = () => {
         )}
         <div className="">
           <label htmlFor="amount">Amount</label>
-          <input
-            type="number"
-            name="amount"
-            id="amount"
-            min={0}
-            step="0.01"
-            value={amount}
-            onChange={(e) => setAmount(e.target.valueAsNumber)}
-            className="block border border-gray-300 shadow-inner w-full px-3 py-2 mt-1"
-          />
+          <div className="relative mt-1">
+            <input
+              type="number"
+              name="amount"
+              id="amount"
+              min={0}
+              step="0.01"
+              value={amount}
+              onChange={(e) => setAmount(e.target.valueAsNumber)}
+              className="number-input-no-spinner block h-16 w-full rounded-md border border-slate-300 bg-white pl-4 pr-10 text-right text-3xl font-semibold tabular-nums text-slate-900 shadow-sm outline-none transition focus:border-emerald-700 focus:ring-4 focus:ring-emerald-100"
+            />
+            <div className="absolute inset-y-2 right-2 flex w-7 flex-col overflow-hidden rounded border border-slate-200 bg-white">
+              <button
+                type="button"
+                aria-label="Increase amount by one"
+                onClick={() =>
+                  setAmount((current) =>
+                    Math.max(0, Number(((Number.isFinite(current) ? current : 0) + 1).toFixed(2))),
+                  )
+                }
+                className="flex flex-1 cursor-pointer items-center justify-center text-slate-600 hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline-2 focus-visible:outline-emerald-700"
+              >
+                <ChevronUp aria-hidden="true" size={14} />
+              </button>
+              <button
+                type="button"
+                aria-label="Decrease amount by one"
+                onClick={() =>
+                  setAmount((current) =>
+                    Math.max(0, Number(((Number.isFinite(current) ? current : 0) - 1).toFixed(2))),
+                  )
+                }
+                className="flex flex-1 cursor-pointer items-center justify-center border-t border-slate-200 text-slate-600 hover:bg-emerald-50 hover:text-emerald-800 focus-visible:outline-2 focus-visible:outline-emerald-700"
+              >
+                <ChevronDown aria-hidden="true" size={14} />
+              </button>
+            </div>
+          </div>
         </div>
 
         <div>
@@ -129,13 +158,13 @@ const RecordForm = () => {
             value={category}
             disabled={categoriesLoading || categories.length === 0}
             onChange={(e) => setCategory(e.target.value)}
-            className="block w-full border border-gray-300 px-3 py-2 mt-1 shadow-inner cursor-pointer"
+            className="block w-full border border-gray-300 px-3 py-2 mt-1 shadow-inner cursor-pointer disabled:cursor-pointer"
           >
-            <option value="" disabled>
+            <option value="" disabled className="cursor-pointer">
               {categoriesLoading ? "Loading categories..." : "Select a category"}
             </option>
             {categories.map((category) => (
-              <option key={category.id} value={category.id}>
+              <option key={category.id} value={category.id} className="cursor-pointer">
                 {category.icon} {category.name}
               </option>
             ))}
@@ -170,13 +199,14 @@ const RecordForm = () => {
           />
         </div>
 
-        <label htmlFor="is-hidden" className="flex items-center gap-2">
+        <label htmlFor="is-hidden" className="flex cursor-pointer items-center gap-2">
           <input
             type="checkbox"
             name="isHidden"
             id="is-hidden"
             checked={isHidden}
             onChange={(e) => setIsHidden(e.target.checked)}
+            className="cursor-pointer"
           />
           Hide this record
         </label>
@@ -190,13 +220,13 @@ const RecordForm = () => {
             value={paymentMethodId}
             disabled={paymentMethodsLoading || paymentMethods.length === 0}
             onChange={(e) => setPaymentMethodId(e.target.value)}
-            className="block w-full border border-gray-300 px-3 py-2 cursor-pointer mt-1 shadow-inner"
+            className="block w-full border border-gray-300 px-3 py-2 cursor-pointer disabled:cursor-pointer mt-1 shadow-inner"
           >
-            <option value="" disabled>
+            <option value="" disabled className="cursor-pointer">
               {paymentMethodsLoading ? "Loading payment methods..." : "Select a payment method"}
             </option>
             {paymentMethods.map((paymentMethod) => (
-              <option key={paymentMethod.id} value={paymentMethod.id}>
+              <option key={paymentMethod.id} value={paymentMethod.id} className="cursor-pointer">
                 {paymentMethod.icon} {paymentMethod.name}
               </option>
             ))}
@@ -234,7 +264,7 @@ const RecordForm = () => {
               !canAddRecord() ||
               (isEditing && (recordsLoading || !existingRecord))
             }
-            className={`${isEditing ? "flex-1" : "w-full"} bg-indigo-200 text-indigo-800 py-2 border border-indigo-700 cursor-pointer disabled:bg-gray-100 disabled:border-gray-400 disabled:text-gray-500 disabled:cursor-not-allowed`}
+            className={`${isEditing ? "flex-1" : "w-full"} cursor-pointer rounded-md border border-emerald-700 bg-emerald-700 px-4 py-2 font-medium text-white transition-colors hover:bg-emerald-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700 disabled:cursor-not-allowed disabled:border-slate-300 disabled:bg-slate-100 disabled:text-slate-400`}
           >
             {isEditing ? "Save Changes" : "Add Record"}
           </button>
@@ -242,7 +272,7 @@ const RecordForm = () => {
             <button
               type="button"
               onClick={() => navigate("/")}
-              className="flex-1 cursor-pointer border border-slate-400 bg-white py-2 text-slate-700 hover:bg-slate-50"
+              className="flex-1 cursor-pointer rounded-md border border-slate-300 bg-white px-4 py-2 font-medium text-slate-700 transition-colors hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700"
             >
               Cancel
             </button>

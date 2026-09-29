@@ -14,6 +14,12 @@ import {
   setDoc,
   updateDoc,
   Timestamp,
+  limit,
+  orderBy,
+  query,
+  startAfter,
+  type DocumentData,
+  type QueryDocumentSnapshot,
 } from "firebase/firestore";
 
 import type { Record } from "./Record";
@@ -70,24 +76,57 @@ const getReferenceId = (value: unknown): string => {
   return "";
 };
 
+const mapRecordDocument = (
+  recordDoc: QueryDocumentSnapshot<DocumentData>,
+): Record => {
+  const data = recordDoc.data();
+  const timestamp =
+    data.timestamp instanceof Timestamp
+      ? data.timestamp.toMillis()
+      : data.timestamp;
+  return {
+    ...data,
+    id: recordDoc.id,
+    timestamp,
+    categoryId: getReferenceId(data.categoryId ?? data.category),
+    paymentMethodId: getReferenceId(data.paymentMethodId ?? data.paymentType),
+  } as Record;
+};
+
 export const getRecords = async (): Promise<Record[]> => {
   const recordSnapshot = await getDocs(collection(db, "records"));
-  return recordSnapshot.docs.map((recordDoc) => {
-    const data = recordDoc.data();
-    const timestamp =
-      data.timestamp instanceof Timestamp
-        ? data.timestamp.toMillis()
-        : data.timestamp;
-    return {
-      ...data,
-      id: recordDoc.id,
-      timestamp,
-      categoryId: getReferenceId(data.categoryId ?? data.category),
-      paymentMethodId: getReferenceId(
-        data.paymentMethodId ?? data.paymentType,
-      ),
-    } as Record;
-  });
+  return recordSnapshot.docs.map(mapRecordDocument);
+};
+
+export type RecordPageCursor = QueryDocumentSnapshot<DocumentData>;
+export const recordsPageSize = 20;
+
+export const getRecordsPage = async (
+  cursor: RecordPageCursor | null = null,
+): Promise<{
+  records: Record[];
+  cursor: RecordPageCursor | null;
+  hasMore: boolean;
+}> => {
+  const recordsCollection = collection(db, "records");
+  const recordsQuery = cursor
+    ? query(
+        recordsCollection,
+        orderBy("timestamp", "desc"),
+        startAfter(cursor),
+        limit(recordsPageSize),
+      )
+    : query(
+        recordsCollection,
+        orderBy("timestamp", "desc"),
+        limit(recordsPageSize),
+      );
+  const recordSnapshot = await getDocs(recordsQuery);
+  return {
+    records: recordSnapshot.docs.map(mapRecordDocument),
+    cursor: recordSnapshot.docs.at(-1) ?? null,
+    hasMore: recordSnapshot.size === recordsPageSize,
+  };
 };
 
 export const saveRecord = async (
