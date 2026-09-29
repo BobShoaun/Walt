@@ -90,7 +90,7 @@ export const getRecords = async (): Promise<Record[]> => {
   });
 };
 
-export const addRecord = async (
+export const saveRecord = async (
   record: Record,
   category: Category,
   paymentMethod: PaymentMethod,
@@ -132,7 +132,7 @@ export const addRecord = async (
       });
     }
 
-    const docRef = await addDoc(collection(db, "records"), {
+    const recordData = {
       title: record.title,
       description: record.description,
       amount: record.amount,
@@ -141,7 +141,14 @@ export const addRecord = async (
       categoryId: categoryRef,
       paymentMethodId: paymentMethodRef,
       isHidden: record.isHidden ?? false,
-    });
+    };
+
+    if (record.id) {
+      await updateDoc(doc(db, "records", record.id), recordData);
+      return record.id;
+    }
+
+    const docRef = await addDoc(collection(db, "records"), recordData);
 
     console.log("Document written with ID: ", docRef.id);
 

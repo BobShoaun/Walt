@@ -20,6 +20,7 @@ interface AppDataContextValue {
   records: Record[];
   recordsLoading: boolean;
   recordsError: string | null;
+  refreshRecords: () => Promise<void>;
 }
 
 const AppDataContext = createContext<AppDataContextValue | null>(null);
@@ -34,6 +35,12 @@ export const AppDataProvider = ({ children }: { children: ReactNode }) => {
   const [records, setRecords] = useState<Record[]>([]);
   const [recordsLoading, setRecordsLoading] = useState(true);
   const [recordsError, setRecordsError] = useState<string | null>(null);
+
+  const refreshRecords = async () => {
+    const loadedRecords = await getRecords();
+    setRecords(loadedRecords);
+    setRecordsError(null);
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -106,6 +113,7 @@ export const AppDataProvider = ({ children }: { children: ReactNode }) => {
         records,
         recordsLoading,
         recordsError,
+        refreshRecords,
       }}
     >
       {children}

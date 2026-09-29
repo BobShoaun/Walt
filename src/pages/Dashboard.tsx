@@ -45,12 +45,12 @@ const Dashboard = () => {
       </div>
 
       {/* <div>
-        <Link className='p-5 cursor-pointer block bg-red-500' to='/add'>+ Add Record</Link>
+        <Link className='p-5 cursor-pointer block bg-red-500' to='/records/add'>+ Add Record</Link>
       </div> */}
 
       <Link
         className="absolute p-4 cursor-pointer block bg-blue-500 text-white font-bold text-xl shadow-2xl bottom-2 right-2 rounded-4xl"
-        to="/add"
+        to="/records/add"
       >
         +
       </Link>

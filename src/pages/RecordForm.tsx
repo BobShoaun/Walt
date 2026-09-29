@@ -1,11 +1,11 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import { addRecord as addRecordToFirebase } from "../firebase";
+import { saveRecord as saveRecordToFirebase } from "../firebase";
 import { useAppData } from "../AppDataContext.tsx";
 
-const AddRecord = () => {
+const RecordForm = () => {
   const navigate = useNavigate();
   const {
     categories,
@@ -14,7 +14,13 @@ const AddRecord = () => {
     paymentMethods,
     paymentMethodsLoading,
     paymentMethodsError,
+    records,
+    recordsLoading,
+    refreshRecords,
   } = useAppData();
+  const { recordId } = useParams();
+  const isEditing = Boolean(recordId);
+  const existingRecord = records.find((record) => record.id === recordId);
 
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -25,9 +31,24 @@ const AddRecord = () => {
   const [category, setCategory] = useState<string>("");
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!existingRecord) return;
+    setTitle(existingRecord.title);
+    setDescription(existingRecord.description ?? "");
+    setAmount(existingRecord.amount);
+    setTimestamp(new Date(existingRecord.timestamp));
+    setIsHidden(existingRecord.isHidden ?? false);
+    setPaymentMethodId(existingRecord.paymentMethodId);
+    setCategory(existingRecord.categoryId);
+  }, [existingRecord]);
+
   const addRecord = async () => {
-    console.log("adding record...");
+    console.log(isEditing ? "updating record..." : "adding record...");
     setSubmitError(null);
+    if (isEditing && !existingRecord) {
+      setSubmitError("Record not found.");
+      return;
+    }
     if (!Number.isFinite(amount) || amount < 0) {
       setSubmitError("Enter a valid non-negative amount.");
       return;
@@ -47,8 +68,8 @@ const AddRecord = () => {
     }
 
     try {
-      await addRecordToFirebase({
-        id: "", // Firebase will generate an ID
+      await saveRecordToFirebase({
+        id: existingRecord?.id ?? "",
         title,
         description,
         amount,
@@ -58,8 +79,10 @@ const AddRecord = () => {
         paymentMethodId,
         isHidden,
       }, selectedCategory, selectedPaymentMethod);
+      await refreshRecords();
+      navigate("/");
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "Unable to add record.");
+      setSubmitError(error instanceof Error ? error.message : "Unable to save record.");
     }
   };
 
@@ -79,6 +102,10 @@ const AddRecord = () => {
         }}
         className="flex flex-col gap-4"
       >
+        {isEditing && recordsLoading && <p>Loading record...</p>}
+        {isEditing && !recordsLoading && !existingRecord && (
+          <p role="alert" className="text-red-700">Record not found.</p>
+        )}
         <div className="">
           <label htmlFor="amount">Amount</label>
           <input
@@ -200,14 +227,27 @@ const AddRecord = () => {
           />
         </div>
 
-        <button
-          type="submit"
-          disabled={!canAddRecord()}
-          className="w-full bg-indigo-200 text-indigo-800 py-2 border border-indigo-700 
-          cursor-pointer disabled:bg-gray-100 disabled:border-gray-400 disabled:text-gray-500 disabled:cursor-not-allowed"
-        >
-          Add Record
-        </button>
+        <div className={isEditing ? "flex gap-2" : ""}>
+          <button
+            type="submit"
+            disabled={
+              !canAddRecord() ||
+              (isEditing && (recordsLoading || !existingRecord))
+            }
+            className={`${isEditing ? "flex-1" : "w-full"} bg-indigo-200 text-indigo-800 py-2 border border-indigo-700 cursor-pointer disabled:bg-gray-100 disabled:border-gray-400 disabled:text-gray-500 disabled:cursor-not-allowed`}
+          >
+            {isEditing ? "Save Changes" : "Add Record"}
+          </button>
+          {isEditing && (
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              className="flex-1 cursor-pointer border border-slate-400 bg-white py-2 text-slate-700 hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+          )}
+        </div>
         {submitError && (
           <p role="alert" className="text-red-700">
             {submitError}
@@ -218,4 +258,4 @@ const AddRecord = () => {
   );
 };
 
-export default AddRecord;
+export default RecordForm;
