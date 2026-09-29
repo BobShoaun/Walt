@@ -15,8 +15,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
-        name: 'Wallet Tracker',
-        short_name: 'Wallet',
+        name: 'Walt',
+        short_name: 'Walt',
         description: 'Track your expenses easily.',
         theme_color: '#0f172a',
         background_color: '#ffffff',

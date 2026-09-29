@@ -1,22 +1,23 @@
 export interface Expense {
   id: string;
-  description: string;
+  title: string;
+  description?: string;
   amount: number;
   currency: string;
   timestamp: number;
   category: string;
-  paymentType: "credit-card" | "cash" | "bank-transfer" | "debit-card";
+  paymentType: "credit-card" | "cash" | "bank-transfer" | "debit-card"; // paymentMethod
   reimbursement?: {
     amount: number;
     reason: string;
   };
-  isHidden?: boolean;
+  isHidden?: boolean; // or is redacted?
 }
 
 export const dummyExpenses: Expense[] = [
   {
     id: "1",
-    description: "Grocery shopping at Walmart",
+    title: "Grocery shopping at Walmart",
     amount: 82.45,
     currency: "USD",
     timestamp: Date.now() - 1000 * 60 * 60 * 2, // 2 hours ago
@@ -25,7 +26,7 @@ export const dummyExpenses: Expense[] = [
   },
   {
     id: "2",
-    description: "Uber ride to airport",
+    title: "Uber ride to airport",
     amount: 26.75,
     currency: "USD",
     timestamp: Date.now() - 1000 * 60 * 60 * 5,
@@ -34,7 +35,7 @@ export const dummyExpenses: Expense[] = [
   },
   {
     id: "3",
-    description: "Netflix monthly subscription",
+    title: "Netflix monthly subscription",
     amount: 15.99,
     currency: "USD",
     timestamp: Date.now() - 1000 * 60 * 60 * 24 * 3,
@@ -43,7 +44,7 @@ export const dummyExpenses: Expense[] = [
   },
   {
     id: "4",
-    description: "Coffee at Starbucks",
+    title: "Coffee at Starbucks",
     amount: 4.85,
     currency: "USD",
     timestamp: Date.now() - 1000 * 60 * 60 * 8,
@@ -52,7 +53,7 @@ export const dummyExpenses: Expense[] = [
   },
   {
     id: "5",
-    description: "Gas station refill",
+    title: "Gas station refill",
     amount: 52.1,
     currency: "USD",
     timestamp: Date.now() - 1000 * 60 * 60 * 48,
@@ -61,7 +62,7 @@ export const dummyExpenses: Expense[] = [
   },
   {
     id: "6",
-    description: "Dinner date at Italian restaurant",
+    title: "Dinner date at Italian restaurant",
     amount: 67.3,
     currency: "USD",
     timestamp: Date.now() - 1000 * 60 * 60 * 72,
@@ -70,7 +71,7 @@ export const dummyExpenses: Expense[] = [
   },
   {
     id: "7",
-    description: "Monthly gym membership",
+    title: "Monthly gym membership",
     amount: 40,
     currency: "USD",
     timestamp: Date.now() - 1000 * 60 * 60 * 24 * 5,
@@ -79,7 +80,7 @@ export const dummyExpenses: Expense[] = [
   },
   {
     id: "8",
-    description: "Electricity bill",
+    title: "Electricity bill",
     amount: 120.5,
     currency: "USD",
     timestamp: Date.now() - 1000 * 60 * 60 * 24 * 6,
@@ -88,7 +89,7 @@ export const dummyExpenses: Expense[] = [
   },
   {
     id: "9",
-    description: "Movie night tickets",
+    title: "Movie night tickets",
     amount: 28,
     currency: "USD",
     timestamp: Date.now() - 1000 * 60 * 60 * 12,
@@ -97,7 +98,7 @@ export const dummyExpenses: Expense[] = [
   },
   {
     id: "10",
-    description: "Donation to charity",
+    title: "Donation to charity",
     amount: 25,
     currency: "USD",
     timestamp: Date.now() - 1000 * 60 * 60 * 24 * 10,

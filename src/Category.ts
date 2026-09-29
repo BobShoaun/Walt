@@ -34,53 +34,53 @@
 
 export interface Category {
   name: string;
-  slug: string;
+  id: string;
   image: string;
   color: string;
 }
 
 
-export const categories: Category[] = [
+const categories: Category[] = [
   {
     name: "Food & Drinks",
-    slug: "food-and-drinks",
+    id: "food-and-drinks",
     image: "🍉",
     color: ""
   },
   {
     name: "Entertainment",
-    slug: "entertainment",
+    id: "entertainment",
     image: "🎮",
     color: ""
   },
   {
     name: "Utilities",
-    slug: "utilities",
+    id: "utilities",
     image: "💡",
     color: ""
   },
   {
     name: "Health & Fitness",
-    slug: "health-and-fitness",
+    id: "health-and-fitness",
     image: "💪",
     color: ""
   },
   {
     name: "Transportation",
-    slug: "transportation",
+    id: "transportation",
     image: "🚋",
     color: ""
   },
   {
     name: "Groceries",
-    slug: "groceries",
+    id: "groceries",
     image: "🧺",
     color: ""
   },
   {
     name: "Others",
-    slug: "others",
+    id: "others",
     image: "🔶",
     color: ""
   },
-]
+];

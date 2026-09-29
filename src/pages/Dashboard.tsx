@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 
 import ExpenseCard from "../components/ExpenseCard";
 
+import "../firebase";
+
 const Dashboard = () => {
   const [count, setCount] = useState(0);
 
@@ -11,7 +13,7 @@ const Dashboard = () => {
 
   return (
     <main className="flex flex-col overflow-auto relative">
-      {/* <h1 className="text-3xl font-bold underline">Expense Tracker</h1> */}
+      {/* <h1 className="text-3xl font-bold underline">Walt</h1> */}
 
       <div className="m-2">
         <input

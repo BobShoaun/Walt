@@ -5,9 +5,17 @@ When you say wallet so fast it becomes just... Walt
 This app lets you record an expense as fast as you can say Walt 20 times.
 
 
-Lets face it, there are too many expense trackers out there that either want your money or want to feed you unskippable ads everytime you try to add an expense. It makes you dread opening the app to track an expense so you end up just not doing it at all! And because of that you start spending without any second thought and next thing you know, you're broke! This app will literally save you from bankrupcy.
+Lets face it, there are too many expense trackers out there that either want your money or want to feed you unskippable ads everytime you try to add an expense. It makes you dread opening the app to input an expense, so you end up just not doing it at all! Hence, you start spending without having a second thought, and next thing you know, you're broke! This app will literally save you from bankrupcy.
 
 Having banking integration is a fallacy, there a too many banks to account for, and what happens when you paid in cash? or your friend paid for the bill and you had to etransfer them?
+
+# Development
+
+TLDR
+
+```
+npm run dev
+```
 
 
 # React + TypeScript + Vite

@@ -1,9 +1,10 @@
-import { categories } from "../Category";
 import type { Expense } from "../Expense";
+import { useCategories } from "../CategoryContext.tsx";
 
 const ExpenseCard = ({ expense }: { expense: Expense }) => {
+  const { categories } = useCategories();
   const category = categories.find(
-    (category) => category.slug === expense.category
+    (category) => category.id === expense.category
   );
 
   return (
@@ -13,7 +14,7 @@ const ExpenseCard = ({ expense }: { expense: Expense }) => {
       </div>
 
       <div>
-        <h2 className="text-gray-500 text-base">{expense.description}</h2>
+        <h2 className="text-gray-500 text-base">{expense.title}</h2>
         <p className="text-gray-800 text-xs">{category?.name}</p>
       </div>
 
