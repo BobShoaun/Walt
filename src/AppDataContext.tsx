@@ -6,27 +6,34 @@ import {
   type ReactNode,
 } from "react";
 import type { Category } from "./Category";
+import type { Record } from "./Record";
 import type { PaymentMethod } from "./PaymentMethod";
-import { getCategories, getPaymentMethods } from "./firebase";
+import { getCategories, getRecords, getPaymentMethods } from "./firebase";
 
-interface CategoriesContextValue {
+interface AppDataContextValue {
   categories: Category[];
   categoriesLoading: boolean;
   categoriesError: string | null;
   paymentMethods: PaymentMethod[];
   paymentMethodsLoading: boolean;
   paymentMethodsError: string | null;
+  records: Record[];
+  recordsLoading: boolean;
+  recordsError: string | null;
 }
 
-const CategoriesContext = createContext<CategoriesContextValue | null>(null);
+const AppDataContext = createContext<AppDataContextValue | null>(null);
 
-export const CategoriesProvider = ({ children }: { children: ReactNode }) => {
+export const AppDataProvider = ({ children }: { children: ReactNode }) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [categoriesError, setCategoriesError] = useState<string | null>(null);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [paymentMethodsLoading, setPaymentMethodsLoading] = useState(true);
   const [paymentMethodsError, setPaymentMethodsError] = useState<string | null>(null);
+  const [records, setRecords] = useState<Record[]>([]);
+  const [recordsLoading, setRecordsLoading] = useState(true);
+  const [recordsError, setRecordsError] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -65,13 +72,30 @@ export const CategoriesProvider = ({ children }: { children: ReactNode }) => {
         if (isMounted) setPaymentMethodsLoading(false);
       });
 
+    getRecords()
+      .then((loadedRecords) => {
+        if (isMounted) setRecords(loadedRecords);
+      })
+      .catch((fetchError: unknown) => {
+        if (isMounted) {
+          setRecordsError(
+            fetchError instanceof Error
+              ? fetchError.message
+              : "Unable to load records.",
+          );
+        }
+      })
+      .finally(() => {
+        if (isMounted) setRecordsLoading(false);
+      });
+
     return () => {
       isMounted = false;
     };
   }, []);
 
   return (
-    <CategoriesContext.Provider
+    <AppDataContext.Provider
       value={{
         categories,
         categoriesLoading,
@@ -79,17 +103,20 @@ export const CategoriesProvider = ({ children }: { children: ReactNode }) => {
         paymentMethods,
         paymentMethodsLoading,
         paymentMethodsError,
+        records,
+        recordsLoading,
+        recordsError,
       }}
     >
       {children}
-    </CategoriesContext.Provider>
+    </AppDataContext.Provider>
   );
 };
 
-export const useCategories = () => {
-  const context = useContext(CategoriesContext);
+export const useAppData = () => {
+  const context = useContext(AppDataContext);
   if (!context) {
-    throw new Error("useCategories must be used within CategoriesProvider");
+    throw new Error("useAppData must be used within AppDataProvider");
   }
   return context;
 };

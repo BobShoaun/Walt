@@ -17,7 +17,7 @@ export default defineConfig({
       manifest: {
         name: 'Walt',
         short_name: 'Walt',
-        description: 'Track your expenses easily.',
+        description: 'Track your records easily.',
         theme_color: '#0f172a',
         background_color: '#ffffff',
         display: 'standalone',

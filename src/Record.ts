@@ -1,4 +1,4 @@
-export interface Expense {
+export interface Record {
   id: string;
   title: string;
   description?: string;
@@ -14,7 +14,7 @@ export interface Expense {
   isHidden?: boolean; // or is redacted?
 }
 
-export const dummyExpenses: Expense[] = [
+export const dummyRecords: Record[] = [
   {
     id: "1",
     title: "Grocery shopping at Walmart",

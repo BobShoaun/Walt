@@ -2,10 +2,10 @@ import { useNavigate } from "react-router-dom";
 
 import { useState } from "react";
 
-import { addExpense as addExpenseToFirebase } from "../firebase";
-import { useCategories } from "../CategoryContext.tsx";
+import { addRecord as addRecordToFirebase } from "../firebase";
+import { useAppData } from "../AppDataContext.tsx";
 
-const AddExpense = () => {
+const AddRecord = () => {
   const navigate = useNavigate();
   const {
     categories,
@@ -14,18 +14,19 @@ const AddExpense = () => {
     paymentMethods,
     paymentMethodsLoading,
     paymentMethodsError,
-  } = useCategories();
+  } = useAppData();
 
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
   const [timestamp, setTimestamp] = useState<Date>(new Date());
+  const [isHidden, setIsHidden] = useState<boolean>(false);
   const [paymentMethodId, setPaymentMethodId] = useState<string>("");
   const [category, setCategory] = useState<string>("");
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const addExpense = async () => {
-    console.log("adding expense...");
+  const addRecord = async () => {
+    console.log("adding record...");
     setSubmitError(null);
     if (!Number.isFinite(amount) || amount < 0) {
       setSubmitError("Enter a valid non-negative amount.");
@@ -46,7 +47,7 @@ const AddExpense = () => {
     }
 
     try {
-      await addExpenseToFirebase({
+      await addRecordToFirebase({
         id: "", // Firebase will generate an ID
         title,
         description,
@@ -55,13 +56,14 @@ const AddExpense = () => {
         categoryId: category,
         timestamp: timestamp.getTime(),
         paymentMethodId,
+        isHidden,
       }, selectedCategory, selectedPaymentMethod);
     } catch (error) {
-      setSubmitError(error instanceof Error ? error.message : "Unable to add expense.");
+      setSubmitError(error instanceof Error ? error.message : "Unable to add record.");
     }
   };
 
-  const canAddExpense = () => {
+  const canAddRecord = () => {
     return true;
     // return title.length > 0 && category.length > 0 && Number.isFinite(amount) && amount >= 0;
   }
@@ -73,7 +75,7 @@ const AddExpense = () => {
         onSubmit={async (e) => {
           e.preventDefault();
           // navigate("/")
-          await addExpense();
+          await addRecord();
         }}
         className="flex flex-col gap-4"
       >
@@ -141,6 +143,17 @@ const AddExpense = () => {
           />
         </div>
 
+        <label htmlFor="is-hidden" className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            name="isHidden"
+            id="is-hidden"
+            checked={isHidden}
+            onChange={(e) => setIsHidden(e.target.checked)}
+          />
+          Hide this record
+        </label>
+
         <div>
           <label htmlFor="payment-method">Payment Method</label>
           <select
@@ -189,11 +202,11 @@ const AddExpense = () => {
 
         <button
           type="submit"
-          disabled={!canAddExpense()}
+          disabled={!canAddRecord()}
           className="w-full bg-indigo-200 text-indigo-800 py-2 border border-indigo-700 
           cursor-pointer disabled:bg-gray-100 disabled:border-gray-400 disabled:text-gray-500 disabled:cursor-not-allowed"
         >
-          Add Expense
+          Add Record
         </button>
         {submitError && (
           <p role="alert" className="text-red-700">
@@ -205,4 +218,4 @@ const AddExpense = () => {
   );
 };
 
-export default AddExpense;
+export default AddRecord;

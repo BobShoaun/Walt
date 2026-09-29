@@ -13,9 +13,10 @@ import {
   deleteField,
   setDoc,
   updateDoc,
+  Timestamp,
 } from "firebase/firestore";
 
-import type { Expense } from "./Expense";
+import type { Record } from "./Record";
 import type { Category } from "./Category";
 import type { PaymentMethod } from "./PaymentMethod";
 
@@ -56,17 +57,50 @@ export const getPaymentMethods = async (): Promise<PaymentMethod[]> => {
   }) as PaymentMethod);
 };
 
-export const addExpense = async (
-  expense: Expense,
+const getReferenceId = (value: unknown): string => {
+  if (typeof value === "string") return value;
+  if (
+    value &&
+    typeof value === "object" &&
+    "id" in value &&
+    typeof value.id === "string"
+  ) {
+    return value.id;
+  }
+  return "";
+};
+
+export const getRecords = async (): Promise<Record[]> => {
+  const recordSnapshot = await getDocs(collection(db, "records"));
+  return recordSnapshot.docs.map((recordDoc) => {
+    const data = recordDoc.data();
+    const timestamp =
+      data.timestamp instanceof Timestamp
+        ? data.timestamp.toMillis()
+        : data.timestamp;
+    return {
+      ...data,
+      id: recordDoc.id,
+      timestamp,
+      categoryId: getReferenceId(data.categoryId ?? data.category),
+      paymentMethodId: getReferenceId(
+        data.paymentMethodId ?? data.paymentType,
+      ),
+    } as Record;
+  });
+};
+
+export const addRecord = async (
+  record: Record,
   category: Category,
   paymentMethod: PaymentMethod,
 ) => {
  try {
-    if (category.id !== expense.categoryId) {
-      throw new Error(`Unknown category: ${expense.categoryId}`);
+    if (category.id !== record.categoryId) {
+      throw new Error(`Unknown category: ${record.categoryId}`);
     }
-    if (paymentMethod.id !== expense.paymentMethodId) {
-      throw new Error(`Unknown payment method: ${expense.paymentMethodId}`);
+    if (paymentMethod.id !== record.paymentMethodId) {
+      throw new Error(`Unknown payment method: ${record.paymentMethodId}`);
     }
 
     const categoryRef = doc(db, "categories", category.id);
@@ -98,14 +132,15 @@ export const addExpense = async (
       });
     }
 
-    const docRef = await addDoc(collection(db, "expenses"), {
-      title: expense.title,
-      description: expense.description,
-      amount: expense.amount,
-      timestamp: expense.timestamp,
-      currency: expense.currency,
+    const docRef = await addDoc(collection(db, "records"), {
+      title: record.title,
+      description: record.description,
+      amount: record.amount,
+      timestamp: record.timestamp,
+      currency: record.currency,
       categoryId: categoryRef,
       paymentMethodId: paymentMethodRef,
+      isHidden: record.isHidden ?? false,
     });
 
     console.log("Document written with ID: ", docRef.id);
