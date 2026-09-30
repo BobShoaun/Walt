@@ -3,31 +3,85 @@
  * Food & Drinks
  *  - Groceries
  *  - Restaurant
- *  - Bar, cafe
+ *  - Cafe & Coffee shops
  * 
  * Housing
  * - Rent
  * - Mortgage
- * - Energy, utilities
+ * - Utilities
  * - Furniture
+ * - Insurance
  * 
  * Transportation
  * - Public transport
  * - Taxi
- * - Long distance
+ * - Flight
+ * - Train
+ * - Vehicle rental
+ * - Fuel
+ * - Vehicle maintenance 
  * 
+ * Travel & Vacation
+ * - Flight
+ * - Hotel, Lodging
+ * - Taxi
+ * - Logistics, insurance, baggage fees
+ * 
+ * 
+ * Personal care & Fashion
+ * - Haircut
+ * - Laundry
+ * - Clothes
+ * - Shoes
+ * - Accessories, jewelry
+ * 
+ * 
+ * Leisure & Entertainment
+ * - Nightclub, Parties
+ * - Hobbies
+ * - Media & Streaming
+ * - Gifts, charity
+ * - Cinema
+ * - Alcohol, drugs
+ * - Games
+ * - Sports, fitness
+ * - Toys
+ * - Concerts
+ * 
+ * Education & Personal Growth
+ * - Tuition & Courses
+ * - Books
+ * - Conference & Workshops
+ * 
+ *
+ * Tools, Tech
+ * - Software
+ * - Stationary
+ * - Electronics
+ * - Hardware
+ * 
+ * 
+ * Communication
+ * - Internet
+ * - Cellular plan
+ * - Postal & Shipping
+ * 
+ * 
+ * Healthcare & Medical
+ * - Dentist
+ * - Doctor
+ * - Drugs, medicine
+ * - Insurance
+ * 
+ * 
+ * Financial
+ * - Credit card fees
+ * - Banking fees
+ * - Fines
  * 
  * Government
- * - Visa
- * 
- * 
- * Life & Entertainment
- * - Party
- * - Club
- * - Hobbies
- * 
- * 
- * Laundry
+ * - Taxes
+ * - Immigration
  * 
  * 
  */
